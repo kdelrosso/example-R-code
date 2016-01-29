@@ -686,9 +686,11 @@ We'll identify digits in which the three nearest neighbors are all the same and 
 
 euclid_df = kNN( "distance_matrix_euclidean.RData", y, cv_fold, k = 3 ) 
 
+# read in digits for residual plot, removing duplicates
 misclass_df = read.csv( 'save_misclass_3.csv', stringsAsFactors = FALSE )
+misclass_df = misclass_df[ !duplicated( misclass_df$digit  ), ]
 
-# order by truth digits
+# order by truth digits 
 ordering = order( misclass_df$truth )
 misclass_df = misclass_df[ordering,]
 
@@ -700,7 +702,7 @@ y0 = u[3] + .9*(u[4] - u[3])
 image = save_plot("./images/misclass_digits.png")
 
 # plot mis-classified digits
-par(mfrow = c(8, 10), mar = rep(0, 4))
+par(mfrow = c(10, 12), mar = rep(0, 4))
 invisible( apply( digits[misclass_df$digit,], 1, function(row) {
     label = row[1]
     draw( row[-1] ) # remove prediction column
@@ -717,9 +719,10 @@ grid.raster( readPNG(image) )
 ```{r fig.align='center'}
 image = save_plot("./images/misclass_digits_res.png", width = 1000, height = 1000)
 
-# plot mis-classified digits showing residuals
+# plot mis-classified digits showing residuals 
 par(mfrow = c(18, 16), mar = rep(0, 4), pty = "s")
-invisible( apply( misclass_df[1:72,], 1, function(row) {
+rows = sort( sample( 118, size = 72 ) )
+invisible( apply( misclass_df[rows,], 1, function(row) {
     
     x = digits[ row['digit'], ]
     
